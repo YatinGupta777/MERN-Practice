@@ -78,6 +78,7 @@ router.delete("/:id", auth, async (req, res) => {
     const post = await Post.findById(req.params.id); //-1 means recent first
 
     if (!post) return res.status(404).json({ msg: "Post not found" });
+
     //Check user
     if (post.user.toString() !== req.user.id) {
       return res.status(401).json({ msg: "User not authorized" });
@@ -139,6 +140,16 @@ router.put("/unlike/:id", auth, async (req, res) => {
       .map(like => like.user.toString())
       .indexOf(req.user.id);
 
+    for (let i = 0; i < post.likes.length; i++) {
+      if (post.likes[i].user.toString() === req.user.id)
+        console.log("For loop index :" + i);
+    }
+
+    console.log(
+      post.likes.filter(like => like.user.toString() === req.user.id)
+    );
+    console.log("Remove index = " + removeIndex);
+
     post.likes.splice(removeIndex, 1);
     await post.save();
 
@@ -196,7 +207,7 @@ router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
       comment => comment.id === req.params.comment_id
     );
 
-    //Make sure ocmment exists
+    //Make sure comment exists
     if (!comment) {
       return res.status(404).json({ msg: "Comment does not exist" });
     }

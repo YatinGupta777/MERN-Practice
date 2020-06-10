@@ -7,13 +7,13 @@ const Profile = require("../../models/Profile");
 const User = require("../../models/User");
 
 // @route GET api/profile/me
-// @desc get current user profile
+// @desc get current logged in user profile
 // @access Private
 router.get("/me", auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({
       user: req.user.id,
-    }).populate("user", ["name", "avatar"]);
+    }).populate("user", ["name", "avatar"]); // populate brings name and avatar from user model.
 
     if (!profile) {
       return res.status(400).json({
@@ -144,7 +144,7 @@ router.get("/user/:user_id", async (req, res) => {
   }
 });
 
-// @route GET api/profile
+// @route DELETE api/profile
 // @desc Delete profile,user, posts
 // @access Private
 
@@ -233,7 +233,7 @@ router.delete("/experience/:exp_id", auth, async (req, res) => {
     res.json(profile);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Erro");
+    res.status(500).send("Server Error");
   }
 });
 
