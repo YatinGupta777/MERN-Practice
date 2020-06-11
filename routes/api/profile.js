@@ -441,7 +441,7 @@ router.post(
       const userFriends = userProfile.friends;
 
       for (let i = 0; i < userFriends.length; i++) {
-        if (userFriends[i].id == requestedUser.id) {
+        if (userFriends[i] == requestedUser.id) {
           res.status(400).json({ errors: [{ msg: "Already a friend" }] });
         }
       }
@@ -455,6 +455,64 @@ router.post(
 
       await requestedUserProfile.save();
       res.json(requestedUserProfile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  }
+);
+
+// @route POST api/profile/acceptFriendRequest
+// @desc Accept friend request using email
+// @access Private
+router.post(
+  "/acceptFriendRequest",
+  [check("email", "Please include a valid email").isEmail()],
+  auth,
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { email } = req.body;
+    try {
+      //see if user exists
+      let requestedUser = await User.findOne({ email });
+      if (!requestedUser) {
+        res.status(400).json({ errors: [{ msg: "Invalid credentials" }] });
+      }
+
+      const userProfile = await Profile.findOne({
+        user: req.user.id,
+      });
+      const requestedUserProfile = await Profile.findOne({
+        user: requestedUser.id,
+      });
+      // If friend request doesnt exist
+      const userFriendRequests = userProfile.friendRequests;
+      let flag = false;
+      for (let i = 0; i < userFriendRequests.length; i++) {
+        if (userFriendRequests[i] == requestedUser.id) {
+          flag = true;
+          break;
+        }
+      }
+      if (flag == false)
+        res
+          .status(400)
+          .json({ errors: [{ msg: "No Friend Request from this user" }] });
+
+      // Add to friends to each other
+      userProfile.friends.unshift(requestedUser.id);
+      requestedUserProfile.friends.unshift(req.user.id);
+
+      // Removing from friend requests
+      var index = userProfile.friendRequests.indexOf(requestedUser.id);
+      if (index !== -1) userProfile.friendRequests.splice(index, 1);
+
+      await userProfile.save();
+      await requestedUserProfile.save();
+      res.json(userProfile);
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
