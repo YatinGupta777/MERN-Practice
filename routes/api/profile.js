@@ -334,6 +334,27 @@ router.get("/friends", auth, async (req, res) => {
   }
 });
 
+// @route GET api/profile/friendRequests
+// @desc get Currently Logged in Users friend Requests
+// @access Private
+
+router.get("/friendRequests", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({
+      user: req.user.id,
+    });
+    if (!profile) {
+      return res.status(400).json({
+        msg: "There is no profile for this user",
+      });
+    }
+    res.json(profile.friendRequests);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 // @route GET api/profile/availableUsers
 // @desc get all avilable users which can be added as friends
 // @access Private
@@ -348,10 +369,10 @@ router.get("/availableUsers", auth, async (req, res) => {
 
     //To remove currently logged in user
 
-    const removeIndex = profiles
-      .map(profile => profile.user.toString())
-      .indexOf(req.user.id);
-    profiles.splice(removeIndex, 1);
+    // const removeIndex = profiles
+    //   .map(profile => profile.user.toString())
+    //   .indexOf(req.user.id);
+    // profiles.splice(removeIndex, 1);
 
     //To get all friends of the current user
     const userProfile = await Profile.findOne({
@@ -365,11 +386,12 @@ router.get("/availableUsers", auth, async (req, res) => {
       for (let j = 0; j < userFriends.length; j++) {
         if (profiles[i].user.id === userFriends[j].user.id) {
           flag = false;
+          break;
         }
       }
-      if (flag) returnedProfiles.push(profiles[i]);
+      if (flag && profiles[i].user.id != req.user.id)
+        returnedProfiles.push(profiles[i].user); // Getting only users from profiles
     }
-
     res.json(returnedProfiles);
   } catch (err) {
     console.error(err.message);
