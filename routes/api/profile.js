@@ -358,10 +358,19 @@ router.get("/availableUsers", auth, async (req, res) => {
       user: req.user.id,
     });
     const userFriends = userProfile.friends;
-    console.log(userFriends);
-    // const userFriends = userProfile.friends;
+    let returnedProfiles = [];
 
-    res.json(profiles);
+    for (let i = 0; i < profiles.length; i++) {
+      let flag = true;
+      for (let j = 0; j < userFriends.length; j++) {
+        if (profiles[i].user.id === userFriends[j].user.id) {
+          flag = false;
+        }
+      }
+      if (flag) returnedProfiles.push(profiles[i]);
+    }
+
+    res.json(returnedProfiles);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
