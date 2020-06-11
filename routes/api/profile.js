@@ -348,7 +348,14 @@ router.get("/friendRequests", auth, async (req, res) => {
         msg: "There is no profile for this user",
       });
     }
-    res.json(profile.friendRequests);
+    let friendRequestsUsers = [];
+    for (let i = 0; i < profile.friendRequests.length; i++) {
+      const user = await User.findOne({
+        _id: profile.friendRequests[i],
+      });
+      friendRequestsUsers.push(user);
+    }
+    res.json(friendRequestsUsers);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -398,5 +405,61 @@ router.get("/availableUsers", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
+// Friend Requests
+
+// @route POST api/profile/sendFriendRequest
+// @desc Send friend request using email
+// @access Private
+router.post(
+  "/sendFriendRequest",
+  [check("email", "Please include a valid email").isEmail()],
+  auth,
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { email } = req.body;
+    try {
+      //see if user exists
+      let requestedUser = await User.findOne({ email });
+      if (!requestedUser) {
+        res.status(400).json({ errors: [{ msg: "Invalid credentials" }] });
+      }
+
+      // Cannot send friend request to oneself
+      if (requestedUser.id === req.user.id)
+        res.status(400).json({
+          errors: [{ msg: "Cannot send friend request to yourself" }],
+        });
+
+      // Cannot send friend request to already added friends
+      const userProfile = await Profile.findOne({
+        user: req.user.id,
+      });
+      const userFriends = userProfile.friends;
+
+      for (let i = 0; i < userFriends.length; i++) {
+        if (userFriends[i].id == requestedUser.id) {
+          res.status(400).json({ errors: [{ msg: "Already a friend" }] });
+        }
+      }
+
+      // Adding to friend requests
+      const requestedUserProfile = await Profile.findOne({
+        user: requestedUser.id,
+      });
+
+      requestedUserProfile.friendRequests.unshift(req.user.id);
+
+      await requestedUserProfile.save();
+      res.json(requestedUserProfile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  }
+);
 
 module.exports = router;
