@@ -17,12 +17,11 @@ export class TodoItem extends Component {
       <div style={this.getStyle()}>
         <p>Name : {name}</p>
         <p>Email : {email}</p>
-        Accept Request :{" "}
         <button
           onClick={this.props.acceptFriendRequest.bind(this, email)}
           style={btnStyle}
         >
-          X
+          Accept Request
         </button>
       </div>
     );
