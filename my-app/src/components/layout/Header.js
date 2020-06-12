@@ -4,13 +4,17 @@ import { Link } from "react-router-dom";
 function Header() {
   return (
     <header style={headerStyle}>
-      <h1>Friend Requests</h1>
-      <Link style={linkStyle} to='/'>
-        Home
-      </Link>
-      |
+      <h1>Social Networking</h1>
       <Link style={linkStyle} to='/about'>
-        About
+        About {"    "}
+      </Link>
+      |{"    "}
+      <Link style={linkStyle} to='/'>
+        Friend Requests {"    "}
+      </Link>
+      |{"    "}
+      <Link style={linkStyle} to='/profiles'>
+        Profiles {"    "}
       </Link>
     </header>
   );

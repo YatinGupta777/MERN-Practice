@@ -3,6 +3,10 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import Header from "./components/layout/Header";
 import Todos from "./components/Todos";
 import About from "./components/pages/About";
+import Profiles from "./components/Profiles";
+
+import { Provider } from "react-redux";
+import store from "./store";
 //import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import SendFriendRequest from "./components/sendFriendRequest";
@@ -83,29 +87,32 @@ class App extends Component {
 
   render() {
     return (
-      <Router>
-        <div className='App'>
-          <div className='container'>
-            <Header />
-            <Route
-              exact
-              path='/'
-              render={props => (
-                <React.Fragment>
-                  <SendFriendRequest
-                    sendFriendRequest={this.sendFriendRequest}
-                  />
-                  <Todos
-                    todos={this.state.todos}
-                    acceptFriendRequest={this.acceptFriendRequest}
-                  />
-                </React.Fragment>
-              )}
-            />
-            <Route path='/about' component={About} />
+      <Provider store={store}>
+        <Router>
+          <div className='App'>
+            <div className='container'>
+              <Header />
+              <Route
+                exact
+                path='/'
+                render={props => (
+                  <React.Fragment>
+                    <SendFriendRequest
+                      sendFriendRequest={this.sendFriendRequest}
+                    />
+                    <Todos
+                      todos={this.state.todos}
+                      acceptFriendRequest={this.acceptFriendRequest}
+                    />
+                  </React.Fragment>
+                )}
+              />
+              <Route path='/about' component={About} />
+              <Route path='/profiles' component={Profiles} />
+            </div>
           </div>
-        </div>
-      </Router>
+        </Router>
+      </Provider>
     );
   }
 }
