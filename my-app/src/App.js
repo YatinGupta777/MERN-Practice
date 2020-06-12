@@ -4,6 +4,7 @@ import Header from "./components/layout/Header";
 import Todos from "./components/Todos";
 import About from "./components/pages/About";
 import Profiles from "./components/Profiles";
+import Registration from "./components/Registration";
 
 import { Provider } from "react-redux";
 import store from "./store";
@@ -63,28 +64,6 @@ class App extends Component {
     }).then(window.location.reload());
   };
 
-  // // Toggle Todo
-  // markComplete = id => {
-  //   this.setState({
-  //     todos: this.state.todos.map(todo => {
-  //       if (todo.id === id) {
-  //         todo.completed = !todo.completed;
-  //       }
-  //       return todo;
-  //     }),
-  //   });
-  // };
-
-  // // Delete Todo
-
-  // delTodo = id => {
-  //   axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`).then(res =>
-  //     this.setState({
-  //       todos: [...this.state.todos.filter(todo => todo.id !== id)],
-  //     })
-  //   );
-  // };
-
   render() {
     return (
       <Provider store={store}>
@@ -109,6 +88,7 @@ class App extends Component {
               />
               <Route path='/about' component={About} />
               <Route path='/profiles' component={Profiles} />
+              <Route path='/registration' component={Registration} />
             </div>
           </div>
         </Router>

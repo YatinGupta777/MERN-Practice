@@ -16,6 +16,10 @@ function Header() {
       <Link style={linkStyle} to='/profiles'>
         Profiles {"    "}
       </Link>
+      |{"    "}
+      <Link style={linkStyle} to='/registration'>
+        Registration {"    "}
+      </Link>
     </header>
   );
 }

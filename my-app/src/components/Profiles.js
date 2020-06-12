@@ -9,7 +9,6 @@ class Profiles extends Component {
   }
 
   render() {
-    console.log(this.props.payload);
     const profileItems = this.props.profiles.map(profile => (
       <div key={profile._id} style={profileStyle}>
         <h3>Name : {profile.user.name}</h3>
