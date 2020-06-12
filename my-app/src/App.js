@@ -2,15 +2,16 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Header from "./components/layout/Header";
 import Todos from "./components/Todos";
-import AddTodo from "./components/AddTodo";
 import About from "./components/pages/About";
 //import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+import SendFriendRequest from "./components/sendFriendRequest";
 
 const clientToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVlMzE4YzcxYzZmMDVlNjZhNWU1MzExIn0sImlhdCI6MTU5MTk0MTMyMCwiZXhwIjoxNTkxOTc3MzIwfQ.laL2tcflcpgpp5R3IGQTe6AzLeunK2syXSiEJtIafsw";
 const clientToken2 =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWVlMzE4ZTRjY2I3NTZlNjc4ZDVhZTUxIn0sImlhdCI6MTU5MTk0MTM0OSwiZXhwIjoxNTkxOTc3MzQ5fQ.dLJWeNAVjujuVuFpvrdnnOMQCwxQZaXxu3PQJdqQQQk";
+
 class App extends Component {
   state = {
     todos: [],
@@ -28,7 +29,7 @@ class App extends Component {
   }
 
   // send friend requests
-  addTodo = e => {
+  sendFriendRequest = e => {
     axios({
       method: "post",
       url: "http://localhost:5000/api/profile/sendFriendRequest",
@@ -91,7 +92,9 @@ class App extends Component {
               path='/'
               render={props => (
                 <React.Fragment>
-                  <AddTodo addTodo={this.addTodo} />
+                  <SendFriendRequest
+                    sendFriendRequest={this.sendFriendRequest}
+                  />
                   <Todos
                     todos={this.state.todos}
                     acceptFriendRequest={this.acceptFriendRequest}
