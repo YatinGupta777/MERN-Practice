@@ -391,7 +391,7 @@ router.get("/availableUsers", auth, async (req, res) => {
     for (let i = 0; i < profiles.length; i++) {
       let flag = true;
       for (let j = 0; j < userFriends.length; j++) {
-        if (profiles[i].user.id === userFriends[j].user.id) {
+        if (profiles[i].user === userFriends[j].id) {
           flag = false;
           break;
         }
@@ -519,26 +519,5 @@ router.post(
     }
   }
 );
-// @route GET api/profile/availableUsers
-// @desc get profiles which are available to be added as friends
-// @access public
-
-router.get('/availableUsers', async (req, res) => {
-  try {
-    const profiles = await Profile.find().populate('user', [
-      'name',
-      'avatar',
-      'email',
-    ]);
-    // traverse profiles array and check if we are not the user in the profile and the user in the profile
-    // is not our friend
-    profilesFriends = req.friends;
-    console.log(profilesFriends);
-    res.json(profiles);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
 
 module.exports = router;
